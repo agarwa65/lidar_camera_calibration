@@ -1,0 +1,9 @@
+<launch>
+	<param name="use_sim_time" value="true"/>
+	<node pkg="rosbag" type="play" name="player" args=" --clock $(find auro_assignment)/bags/2016-11-22-14-32-13_test_cameracalibrated_out.bag" output="screen"/>
+	<node pkg="rviz" type="rviz" name="rviz_visualize" args=" -f velodyne -d $(find auro_assignment)/config/visualize_bags.rviz"/>
+	<node name="cam_image_proc" pkg="image_proc" type="image_proc" respawn="false" ns="/sensors/camera"/>
+	<node pkg="image_view" type="image_view" name="view" cwd="ROS_HOME">
+		<remap from="image" to="/sensors/camera/image_rect_color"/>
+	</node>
+</launch>
