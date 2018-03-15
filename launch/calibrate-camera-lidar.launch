@@ -1,6 +1,6 @@
 <launch>
 	<node name="rosbag" pkg="rosbag" type="play" args="$(find auro_assignment)/bags/2016-11-22-14-32-13_test_cameracalibrated_out.bag"/>
-	<node name="lidar_image_calibration" pkg="lidar_image_calibration" type="lidar_image_calibration.py" args="$(find auro_assignment)/config/lidar_image_calibration_data.json $(find auro_assignment)/images/frame0001.jpg $(find auro_assignment)/images/output.jpg" output="screen">
+	<node name="lidar_camera_calibration" pkg="auro_assignment" type="lidar3D_camera2D_points.py" args="$(find auro_assignment)/config/lidar_image_calibration_data.json" output="screen">
 		<remap from="camera" to="/sensors/camera/camera_info"/>
 	</node>
 </launch>

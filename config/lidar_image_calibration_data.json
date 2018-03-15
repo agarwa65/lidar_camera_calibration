@@ -1,28 +1,28 @@
 {
 	"points": [ 
-		[ 1.810, 0.067, -0.354, 1.0 ], // top left corner of grid
-		[ 1.835, 0.052, -0.035, 1.0 ], // bottom left corner of grid
-		[ 2.110, -0.525, -0.039, 1.0 ], // bottom right corner of grid
-		[ 1.858, -0.483, -0.374, 1.0 ], // top right corner of grid
-		[ 1.867, -0.220, -0.035, 1.0 ], // middle of face
-		[ 1.842, -0.223, -0.364, 1.0 ] // corner of static object
+		[ 1.810, 0.067, -0.354, 1.0 ], // bottom left corner of board
+		[ 1.835, 0.052, -0.035, 1.0 ], // top left corner of board
+		[ 2.110, -0.525, -0.039, 1.0 ], // top right corner of board
+		[ 1.858, -0.483, -0.374, 1.0 ], // bottom right corner of board
+		[ 1.867, -0.220, -0.035, 1.0 ], // top row middle point of board
+		[ 1.842, -0.223, -0.364, 1.0 ] // last row middle point of board
 	],
 	"uvs": [
-		[364, 425],
+		[364, 425], //similar uv mappings as 
 		[361, 334],
 		[506, 327],
 		[513, 414],
 		[434, 330],
 		[441, 422]
 	],
-	"initialTransform": [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+	"initTransform": [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
 	"bounds": [
-		[ -5, 5 ],
-		[ -5, 5 ],
-		[ -5, 5 ],
-		[ 0, 6.28318530718 ], // 2 * pi
-		[ 0, 6.28318530718 ], // 2 * pi
-		[ 0, 6.28318530718 ] // 2 * pi
+		[ -4, 4 ], // +/- 4 meters
+		[ -4, 4 ], // +/- 4 meters
+		[ -4, 4 ], // +/- 4 meters
+		[ 0, 6.28318530718 ], // 2pi
+		[ 0, 6.28318530718 ], // 2pi
+		[ 0, 6.28318530718 ] // 2pi
 	]
 }
 

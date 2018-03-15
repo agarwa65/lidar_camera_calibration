@@ -1,0 +1,17 @@
+<launch>
+
+	<node name="rosbag" pkg="rosbag" type="play" args=" $(find auro_assignment)/bags/2016-11-22-14-32-13_test_cameracalibrated_out.bag"/>
+	<node name="image_proc" pkg="image_proc" type="image_proc" respawn="false" ns="/sensors/camera">
+		<remap from="image_raw" to="image_color"/>
+	</node>
+	
+	
+	<node name="image_view" pkg="image_view" type="image_view" args="">
+		<remap from="image" to="/sensors/camera/image_rect_color"/>
+	</node>
+
+</launch>
+
+
+
+
