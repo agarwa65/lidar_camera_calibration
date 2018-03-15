@@ -1,0 +1,10 @@
+   <launch>
+
+	<node name="rosbag" pkg="rosbag" type="play" args=" $(find auro_assignment)/bags/2016-11-22-14-32-13_test.bag"/>
+
+    <node name="extract" pkg="image_view" type="extract_images" respawn="false" required="true" output="screen" cwd="ROS_HOME">
+       <remap from="image" to="/sensors/camera/image_color"/>
+    </node>
+
+   </launch>
+

@@ -18,7 +18,7 @@
   rosmsg show sensor_msgs/CameraInfo
 ```
 
-6. Python Script('read_bag.py') to see the values in the rosbag
+6. Script 'read_bag.py' to see the values in the rosbag
 
 7. To publish the topics in the bag, run in a new terminal:
 ```shell
@@ -31,18 +31,23 @@
 ```
 
 8. To export images from rosbag file, ran the export.launch script
+```shell
   $ roslaunch export.launch
-
+```
   It stores images in .ros folder in home directory
 
 9. To see the input video stream from the bag file:
+```shell
   $ rosrun image_view image_view image:=/sensors/camera/image_color
+```
 
 Now, we know the contents of the ros-bag.
 
-Reference:http://wiki.ros.org/ROS/Tutorials
-          http://wiki.ros.org/rosbag/Cookbook
-          http://wiki.ros.org/roslaunch/XML/node
+
+**Reference: ** 
+http://wiki.ros.org/ROS/Tutorials
+http://wiki.ros.org/rosbag/Cookbook
+http://wiki.ros.org/roslaunch/XML/node
 
 
 # TASK 1: Camera Calibration for Image Rectification
@@ -97,7 +102,7 @@ $ rosrun bag_tools change_camera_info.py ../2016-11-22-14-32-13_test_orig.bag ..
 
 6. To rectify images, image_proc is used. The image_proc_view.launch file is used to read the calibrated bag file and rectify the stream
 
-Explanation:
+# Explanation:
 
 image_proc subscribes to image_color and camera_info and publishes image_rect_color
 
@@ -118,16 +123,12 @@ Publishers:
 Subscribers: 
  * /extract_rect_image 
 ```
-
-iamge_view subscribes to image_rect_color and extracts the rectified images from the stream
-
-.....
+image_view subscribes to image_rect_color and extracts the rectified images from the stream
+```xml
   <node name="extract_rect_image" pkg="image_view" type="extract_images" respawn="false" required="true" output="screen" cwd="ROS_HOME">
        <remap from="image" to="/sensors/camera/image_rect_color"/>
-
   </node>
-.....
-
+```
 image_view stores file in home directory in .ros folder, few randomly chosen rectified images were stored in output directory, as it creates a lot of images for the whole bag file
 
 
