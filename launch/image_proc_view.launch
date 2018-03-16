@@ -5,7 +5,10 @@
 		<remap from="image_raw" to="image_color"/>
 	</node>
 	
-	
+	<node name="extract_rect_image" pkg="image_view" type="extract_images" respawn="false" required="true" output="screen" cwd="ROS_HOME">
+       <remap from="image" to="/sensors/camera/image_rect_color"/>
+    </node>
+
 	<node name="image_view" pkg="image_view" type="image_view" args="">
 		<remap from="image" to="/sensors/camera/image_rect_color"/>
 	</node>
