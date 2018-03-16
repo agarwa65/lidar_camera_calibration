@@ -1,6 +1,6 @@
 <launch>
 	<param name="use_sim_time" value="true" />
-	<node name="rosbag" pkg="rosbag" type="play" args="-r 0.5 --clock $(find auro_assignment)/bags/2016-11-22-14-32-13_test_cameracalibrated_out.bag"/>
+	<node name="rosbag" pkg="rosbag" type="play" args="-r 0.25 --clock $(find auro_assignment)/bags/2016-11-22-14-32-13_test_cameracalibrated_out.bag"/>
 	<node name="image_proc" pkg="image_proc" type="image_proc" respawn="false" ns="/sensors/camera">
 		<remap from="image_raw" to="image_color"/>
 	</node>
@@ -8,7 +8,7 @@
 	<node name="tf" pkg="tf" type="static_transform_publisher" args="-0.211852   -0.09627462 -0.30093704  3.70629347  4.77717425  4.05932338 world velodyne 10"/>
 <!-- 	<node name="tf_lidar" type="static_transform_publisher" pkg="tf" args="0 0 0 0 0 0 world velodyne 10"/>
  -->	
- 	<node name="lidar_overlay_image" pkg="auro_assignment" type="lidar_overlay_image.py" args="" >
+ 	<node name="lidar_overlay_image" pkg="auro_assignment" type="lidar_overlay_image.py" args="" output="screen">
 		<remap from="image" to="/sensors/camera/image_rect_color"/>
 		<remap from="image_overlay" to="/sensors/camera/image_overlay"/>
 		<remap from="camera" to="/sensors/camera/camera_info"/>

@@ -63,17 +63,19 @@ def image_callback(data):
 	cv_image = {}
 
 	try:
-		cv_image = bridge.imgmsg_to_cv2(data, 'bgr8')
+		cv_image = bridge.imgmsg_to_cv2(data, 'rgb8')
 	except cv_bridge.CvBridgeError as e:
 			print('Failed to convert image', e)
 			return
 
+	# the transform is same for every frame 
 	(trans, rot) = tf_.lookupTransform( 'world', 'velodyne', rospy.Time( 0 ) )
 
-	# print( trans, rot )
+	# print("transformation: ", trans, rot)
 	trans = tuple(trans) + ( 1,  )
-	# print( trans )
+	# print(trans)
 	rotationMatrix = tf.transformations.quaternion_matrix( rot )
+	# append translation to the last column of rotation matrix(4x4)
 	rotationMatrix[ :, 3 ] = trans
 	# print('rotationMatrix::  ', rotationMatrix)
 
@@ -81,6 +83,7 @@ def image_callback(data):
 
 		for i in range(0, len(velodyneData) - 1):
 			try:
+				# converting to homogeneous coordinates
 				point = [velodyneData[i][0], velodyneData[i][1], velodyneData[i][2],1]
 				# print( point )
 
@@ -92,7 +95,7 @@ def image_callback(data):
 				print("Index Error!!!!!")
 				break
 
-			#  project 3D point to 2D uv
+			#  project 3D point to 2D uv 
 			rotatedPoint = rotationMatrix.dot( point )
 			uv = cameraModel.project3dToPixel( rotatedPoint )
 

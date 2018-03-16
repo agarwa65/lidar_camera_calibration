@@ -98,12 +98,12 @@ Note: Camera Calibration matrices can also be calculated using opencv apis, once
 4. For image rectification, camera calibration matrices info needs to be added to the input bag file. Using ros bag_tools `change_camera_info.py`, create a new output ros bag with updated calibration matrices.
 
 ```shell
-$ rosrun bag_tools change_camera_info.py ../2016-11-22-14-32-13_test_orig.bag ../2016-11-22-14-32-13_test_cameracalibrated_out.bag /sensors/camera/camera_info=../calibrationdata/ost.yaml
+$ rosrun bag_tools change_camera_info.py ../2016-11-22-14-32-13_test_orig.bag ../2016-11-22-14-32-13_test_cameracalibrated_out.bag /sensors/camera/camera_info=../config/ost.yaml
 ```
 
 5. Checked using `read_bag.py` script that the values are updated.
 
-6. To rectify images, image_proc is used. The image_proc_view.launch file is used to read the calibrated bag file and rectify the stream
+6. To rectify images, image_proc is used. The `image_proc_view.launch` file is used to read the calibrated bag file and rectify the stream
 
 # Explanation:
 
@@ -134,7 +134,7 @@ image_view subscribes to image_rect_color and extracts the rectified images from
 ```
 image_view stores file in home directory in .ros folder, few randomly chosen rectified images were stored in images directory, as it creates a lot of images for the whole bag file. Once such rectified image is shown below:
 
-![Task 1: Image Rectification](Images/left-0019.png)
+![Task 1: Image Rectification](images/image_rect1.png)
 
 # TASK 2: Lidar Camera Rotation + Translation Calibration
 
@@ -150,11 +150,13 @@ image_view stores file in home directory in .ros folder, few randomly chosen rec
   c. So when a good correspondance between the point cloud and the image is seen, a frame is saved using image_view
   and the corresponding lidar point selected is published using rviz:
 
-```shell
-  $ rostopic echo /clicked_point
-```
+  ```shell
+    $ rostopic echo /clicked_point
+  ```
   One such clicked point is :
-    ```shell
+
+  ```shell
+
     header: 
       seq: 1
       stamp: 
@@ -165,18 +167,19 @@ image_view stores file in home directory in .ros folder, few randomly chosen rec
       x: 1.83453130722
       y: 0.055240329355
       z: -0.0346876457334
-    ```
 
-    d. The corresponding point from image frame saved using image_view is collected using the `get_image_points.py`
+  ```
 
-    ```shell
-    (361, 334)
-    ```
+  d. The corresponding point from image frame saved using image_view is collected using the `get_image_points.py`
 
-    e. Six such points were collected between Lidar and Camera on the checker board.
+  ```shell
+  (361, 334)
+  ```
+
+  e. Six such points were collected between Lidar and Camera on the checker board.
       - Four points on the four corners of checker board and 2 points in the middle of the top and bottom row of checker board.
 
-![Task 2: Image used for Calibration ](Images/left-0019.png)
+![Task 2: Image used for Calibration ](images/six_point_calibrate.png)
 
 3. Next step is to use these points to minimize the error to solve the `equation 1` described in the paper `https://arxiv.org/pdf/1705.09785.pdf` using Sequential Least SQuares Programming (SLSQP) from scipy for constrained optimization
   - `lidar3D_camera2D_points.py` file is used to calculate the transformation vector between camera and velodyne frame of references
@@ -193,10 +196,40 @@ image_view stores file in home directory in .ros folder, few randomly chosen rec
 ```shell
 Final static transform(tx, ty, tz, Ry, Rp, Rr):
 [-0.211852   -0.09627462 -0.30093704  3.70629347  4.77717425  4.05932338]
-Error: 8.01213185163
+
 ```
 
 ## Lidar Image Overlay:
 
 1. The `lidar_overlay_image.py` script is used to generate the output image desired.
+
+![Task 2: Lidar Image overlay ](images/lidar_image_overlay.jpg)
+
+2. The script subsribes to the nodes that it needs information from:
+  - input calibrated camera info /sensors/camera/camera_info
+  - input rectified image from /sensors/camera/image_rect_color
+  - input point cloud data from /sensors/velodyne_points
+  - transform tf calculated in the previous step /world/velodyne
+
+  And it publishes -
+  - output lidar point overlaid image /sensors/camera/image_overlay
+
+3. The script has callbacks defined for each of the subscribe methods (except tf.TransformListener()) 
+  - camera_callback() listens to the camera_info for the calibrated rosbag
+  - tf.TransformListener() listens to the world to velodyne transform
+  - velodyne_callback() listens to the PointCloud2 for velodyne points, the points are extracted using struct.unpack() in python
+  - image_callback() listens to the input rectified image. It uses static tranform and velodyne frame data to calculate the rotated point in the camera frame, which in turn uses PinholeCameraModel to convert all the 3D rotated points in one frame to 2D - uv points. These points on the ros converted cv_image is then overlaid with lines to get the desired output.
+  Tutorials from [Indigo API tf](http://docs.ros.org/indigo/api/tf/html/python/tf_python.html), [Indigo API transformations](http://docs.ros.org/jade/api/tf/html/python/transformations.html) 
+
+  - image_callback() then also publishes this lidar point overlaid output, which the image_view node listens to show the video
+
+  The output video viewed from image_view node seems laggy, due to too much processing. Some of it can be reduced by removing the image_proc node and instead creating a rectified rosbag and using it as input to the `task2_image_overlay.launch` . The synchronization can definitely be further worked upon to improve.
+
+4. For debugging purposes, the rqt_graph and view_frames shown below was used to understand the nodes connectivity and transform 
+
+```shell
+$ rosrun tf view_frames
+```
+
+![Task 2: pdf debug ](images/pdf_graph.png)
 
